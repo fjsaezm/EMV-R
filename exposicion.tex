@@ -74,13 +74,98 @@ An Extendible Package for Data Exploration, Classification \\and Correlation.\\
 Institute of Pharmaceutical and Food Analysis and Technologies, \\Via Brigata Salerno,
 16147 Genoa, Italy.\end{quote}
 \end{frame}
-\subsection{Distribución Normal Multivariante}
-\begin{frame}{Media Muestral}
-%\begin{verbatim}
 
-%Escribes tu código aquí­
 
-%\end{verbatim}
+\subsection{Distribución Normal Multivariante. Ejemplos}
+
+\begin{frame}{Lectura y media}
+\begin{lstlisting}
+wine <- read.table("http://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data",sep=","); wine
+\end{lstlisting}
+\begin{wrapfigure}{r}{0.25\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{dataframe_wine.png}
+\end{wrapfigure}
+\begin{lstlisting}
+sapply(wine[2:14],mean)
+"Media muestral del conjunto completo"
+
+V2
+    13.0006179775281
+V3
+    2.33634831460674
+V4
+    2.36651685393258
+V5
+    19.4949438202247
+V6
+    99.7415730337079
+V7
+    2.29511235955056
+V8
+    2.02926966292135
+V9
+    0.36185393258427
+V10
+    1.59089887640449
+V11
+    5.05808988202247
+V12
+    0.957449438202247
+V13
+    2.61168539325843
+V14
+    746.893258426966
+    
+\end{lstlisting}
+
+\end{frame}
+\begin{frame}{Dibujado de datos seleccionados. Scatterplots}
+\begin{lstlisting}
+selection1 <- wine[wine$V1 == "1",]
+selection3 <- wine[wine$V1 == "3",]
+mean1 <- sapply(selection1[2:14],mean)
+mean2 <- sapply(selection3[2:14],mean)
+chemical <- c(2,3,4,5,6,7,8,9,10,11,12,13,14)
+plot(chemical,mean1,col = "red")
+points(chemical, mean2, col="blue", pch="*")
+legend(2,1000,legend=c("Medias en Fabrica 1","Medias en Fabrica 2"), col=c("red","blue"),
+                                   pch=c("o","*"))
+\end{lstlisting}
+\begin{wrapfigure}{r}{0.25\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{means.png}
+\end{wrapfigure}
+Podemos realizar scatterplots de la siguiente manera
+\begin{lstlisting}
+plot(popul ~ manu, data = USairpollution)
+\end{lstlisting}
+\begin{wrapfigure}{r}{0.25\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{scatter.png}
+\end{wrapfigure}
+O, dibujar todas las parejas posibles a la vez, y añadir las rectas de regresión
+\begin{lstlisting}
+pairs(USairpollution,
+     panel = function(x, y, ...) {
+         points(x, y, ...)
+         abline(lm(y ~ x), col = "grey")
+     }, pch = ".", cex = 1.5)
+\end{lstlisting}
+\begin{wrapfigure}{r}{0.25\textwidth}
+\centering
+\includegraphics[width=0.25\textwidth]{reg.png}
+\end{wrapfigure}
+\end{frame}
+
+\begin{frame}{Implementación Teórica de una DNM}
+
+\begin{listings}
+DNM <- setRefClass("DNM", 
+                   fields = list(p = "numeric", 
+                                 media = "matrix", 
+                                 cov = "matrix"))
+\end{listings}
 \end{frame}
 
 \section{Para ampliar}
