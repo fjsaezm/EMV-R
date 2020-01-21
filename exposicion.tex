@@ -79,7 +79,7 @@ Institute of Pharmaceutical and Food Analysis and Technologies, \\Via Brigata Sa
 
 \subsection{Distribución Normal Multivariante. Ejemplos}
 
-\begin{frame}{Lectura y media}
+\begin{frame}[fragile]{Lectura y media}
 \begin{lstlisting}
 wine <- read.table("http://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data",sep=","); wine
 \end{lstlisting}
@@ -121,7 +121,7 @@ V14
 \end{lstlisting}
 
 \end{frame}
-\begin{frame}{Dibujado de datos seleccionados. Scatterplots}
+\begin{frame}[fragile]{Dibujado de datos seleccionados. Scatterplots}
 \begin{lstlisting}
 selection1 <- wine[wine$V1 == "1",]
 selection3 <- wine[wine$V1 == "3",]
@@ -159,7 +159,7 @@ pairs(USairpollution,
 \end{wrapfigure}
 \end{frame}
 
-\begin{frame}{Implementación Teórica de una DNM}
+\begin{frame}[fragile]{Implementación Teórica de una DNM}
 
 \begin{lstlisting}
 DNM <- setRefClass("DNM", 
