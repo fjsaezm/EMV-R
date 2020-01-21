@@ -3,6 +3,7 @@
 \usepackage[spanish]{babel} % para escribir en espanol
 \usepackage[utf8]{inputenc}
 \usepackage{wrapfig}
+\usepackage{listings}
 
 \graphicspath{ {imagenes/} }
 
@@ -66,7 +67,7 @@ R está disponible como software libre bajo los términos de la GNU General Publ
 \end{table}
 \begin{wrapfigure}{r}{0.25\textwidth}
 \centering
-\includegraphics[width=0.25\textwidth]{vino.jpg}
+\includegraphics[width=0.2\textwidth]{vino.jpg}
 \end{wrapfigure}
 {Fuente: Machine Learning Repository\\
 Propietarios Originales: }\begin{quote}\scriptsize Forina, M. et al, PARVUS -\\
@@ -160,12 +161,12 @@ pairs(USairpollution,
 
 \begin{frame}{Implementación Teórica de una DNM}
 
-\begin{listings}
+\begin{lstlisting}
 DNM <- setRefClass("DNM", 
                    fields = list(p = "numeric", 
                                  media = "matrix", 
                                  cov = "matrix"))
-\end{listings}
+\end{lstlisting}
 \end{frame}
 
 \section{Para ampliar}
