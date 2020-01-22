@@ -174,7 +174,7 @@ wine <- read.table("http://archive.ics.uci.edu/ml/machine-learning-databases/win
 
 
 
-\begin{frame}[fragile]{Media y desviación típica}
+\begin{frame}[fragile]{Media y desviación típica. Normalización.}
     \begin{columns}[c] % the "c" option specifies center vertical alignment
     \column{.5\textwidth} % column designated by a command
      \begin{lstlisting}[language=R, basicstyle=\ttfamily]
@@ -186,8 +186,21 @@ V13 2.61168539325843
 V14 746.893258426966 
 \end{lstlisting}
     \column{.5\textwidth}
-     Contents split \\ into two lines
+     \begin{lstlisting}[language=R, basicstyle=\ttfamily]
+sapply(wine[2:14],sd)
+V2 0.811826538005857
+V3 1.11714609761446
+...
+V13 0.70999042876505
+V14 314.907474276849
+\end{lstlisting}
+
+
+
     \end{columns}
+    \begin{lstlisting}[language=R, basicstyle=\ttfamily]
+    standardised_wine <- as.data.frame(scale(wine[2:14]))
+\end{lstlisting}
 \end{frame}
 
 
@@ -214,13 +227,13 @@ legend(2,1000,legend=c("Medias en Fabrica 1","Medias en Fabrica 2"), col=c("red"
 
 Podemos realizar scatterplots de la siguiente manera
 
-\begin{wrapfigure}{u}{0.25\textwidth}
-\centering
-\includegraphics[width=0.25\textwidth]{scatter.png}
-\end{wrapfigure}
+
+
 \begin{lstlisting}
 plot(popul ~ manu, data = USairpollution)
 \end{lstlisting}
+\centering
+\includegraphics[width=0.4\textwidth]{scatter.png}
 
 
 
@@ -235,13 +248,12 @@ pairs(USairpollution,
          abline(lm(y ~ x), col = "grey")
      }, pch = ".", cex = 1.5)
 \end{lstlisting}
-
-\begin{wrapfigure}{r}{0.25\textwidth}
-\centering
-\includegraphics[width=0.25\textwidth]{reg.png}
-\end{wrapfigure}
-
 \end{frame}
+\begin{frame}
+\centering
+\includegraphics[width=0.7\textwidth]{reg.png}
+\end{frame}
+
 
 \begin{frame}[fragile]{Implementación Teórica de una DNM}
 
@@ -250,6 +262,22 @@ DNM <- setRefClass("DNM",
                    fields = list(p = "numeric", 
                                  media = "matrix", 
                                  cov = "matrix"))
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+Ejemplo de creación de la DNM $\pmb{X} = (X_1, X_2, X_3)^T \sim N_3 \begin{pmatrix} \begin{pmatrix} 2 \\ 3 \\ -1 \end{pmatrix}, && \begin{pmatrix} 1 & 0 & 1 \\ 0 & 5 & -2 \\ 1 & -2 & 2 \end{pmatrix} \end{pmatrix} $
+
+\begin{lstlisting}
+
+means <- matrix(c(2,3,-1), nrow = 3, ncol = 1)
+
+cov <- matrix(c(1, 0, 1, 0, 5, -2, 1, -2, 2), nrow = 3, ncol = 3)
+
+X <- DNM$new(p = 3, media = means, cov = cov); X
+
+t(chol(X$cov)) \%*\% (chol(X$cov))
+
 \end{lstlisting}
 \end{frame}
 
