@@ -265,8 +265,8 @@ DNM <- setRefClass("DNM",
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]
-Ejemplo de creación de la DNM $\pmb{X} = (X_1, X_2, X_3)^T \sim N_3 \begin{pmatrix} \begin{pmatrix} 2 \\ 3 \\ -1 \end{pmatrix}, && \begin{pmatrix} 1 & 0 & 1 \\ 0 & 5 & -2 \\ 1 & -2 & 2 \end{pmatrix} \end{pmatrix} $
+\begin{frame}[fragile]{Ejemplo de creación de una DNM}
+$\pmb{X} = (X_1, X_2, X_3)^T \sim N_3 \begin{pmatrix} \begin{pmatrix} 2 \\ 3 \\ -1 \end{pmatrix}, && \begin{pmatrix} 1 & 0 & 1 \\ 0 & 5 & -2 \\ 1 & -2 & 2 \end{pmatrix} \end{pmatrix} $
 
 \begin{lstlisting}
 
@@ -279,6 +279,37 @@ X <- DNM$new(p = 3, media = means, cov = cov); X
 t(chol(X$cov)) \%*\% (chol(X$cov))
 
 \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Función de densidad}
+  \begin{lstlisting}
+    # Pre: X es DNM, x matriz
+funcion_densidad <- function(X, x) {
+    if (dim(x)[1] != X$p)
+        stop("Filas de x no coinciden con dimensión de X")
+    if (dim(x)[2] != 1)
+        stop("x no es vector columna")
+    if (det(X$cov) <= 0)
+        stop("Matriz de covarianzas no es definida positiva")
+    # f_X(x)
+    exp(-0.5 * as.numeric(t(x - X$media) %*% solve(X$cov) %*% (x - X$media))) / ((2 * pi)^(X$p / 2) * sqrt(det(X$cov)))
+}
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Función característica}
+  \begin{lstlisting}
+# Pre: X es DNM, t es matriz
+funcion_caracteristica <- function(X, t) {
+    # Comprobación de rango
+    if (dim(t)[1] != X$p)
+        stop("Filas de t no coinciden con dimensión de X")
+    if (dim(t)[2] != 1)
+        stop("t no es vector columna")
+    # psi_X(t)
+    exp(as.complex(1i * t(t) %*% X$media - 0.5 * t(t) %*% X$cov %*% t))
+}
+  \end{lstlisting}
 \end{frame}
 
 \section{Para ampliar}
