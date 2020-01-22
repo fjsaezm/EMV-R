@@ -55,7 +55,27 @@ compilado y ejecutado en una gran cantidad de plataformas UNIX, Windows y MacOs.
 
 \end{frame}
 
-\begin{frame}{Algunas aplicaciones de R}
+\begin{frame}[fragile]{Cómo instalar dependencias}
+R incluye un gestor de paquetes integrado en el lenguaje, que permite instalar dependencias con la orden \texttt{install.packages()}.
+  
+\begin{lstlisting}[language=R, basicstyle=\ttfamily]
+install.packages("MVA")
+install.packages("HSAUR2")
+install.packages("car")
+install.packages("MASS")
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Cómo instalar dependencias}
+Para importar los paquetes para usarlos en un programa:  
+\begin{lstlisting}[language=R, basicstyle=\ttfamily]
+library("MVA")
+library("HSAUR2")
+library("car")
+library("MASS")
+\end{lstlisting}
+
 \end{frame}
 
 \section{R en el análisis multivariante}
@@ -129,6 +149,7 @@ sapply(wine[2:14],mean)
 %% \end{lstlisting}
 
 \end{frame}
+
 \begin{frame}[fragile]{Dibujado de datos seleccionados. Scatterplots}
 \begin{lstlisting}
 selection1 <- wine[wine$V1 == "1",]
