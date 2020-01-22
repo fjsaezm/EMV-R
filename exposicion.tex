@@ -6,7 +6,6 @@
 \usepackage{listings}
 
 
-
 \graphicspath{ {imagenes/} }
 
 \usetheme{Madrid}
@@ -457,6 +456,7 @@ pairs(USairpollution,
 \includegraphics[width=0.7\textwidth]{reg.png}
 \end{frame}
 
+
 \section{Implementaciones}
 \subsection{Distribución normal multivariante}
 \begin{frame}[fragile]{Implementación Teórica de una DNM}
@@ -464,8 +464,8 @@ pairs(USairpollution,
 \begin{lstlisting}
 DNM <- setRefClass("DNM", 
                    fields = list(p = "numeric", 
-                                 media = "matrix", 
-                                 cov = "matrix"))
+                                media = "matrix", 
+                                cov = "matrix"))
 \end{lstlisting}
 \end{frame}
 
@@ -484,24 +484,11 @@ X <- DNM$new(p = 3, media = means, cov = cov); X
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]{Función de densidad}
-\small
-  \begin{lstlisting}
-    # Pre: X es DNM, x matriz
-funcion_densidad <- function(X, x) {
-    if (dim(x)[1] != X$p)
-        stop("Filas de x no coinciden con dimension de X")
-    if (dim(x)[2] != 1)
-        stop("x no es vector columna")
-    if (det(X$cov) <= 0)
-        stop("Matriz de covarianzas no es definida positiva")
-    # f_X(x)
-    exp(-0.5 * as.numeric(t(x - X$media) %*% solve(X$cov) %*% (x - X$media))) / ((2 * pi)^(X$p / 2) * sqrt(det(X$cov)))
-}
-  \end{lstlisting}
-\end{frame}
-
 \begin{frame}[fragile]{Función característica}
+
+Implementamos la función caracteristica de la DNM $\pmb{X} = (X_1, \ldots, X_p)^T \sim N_p(\pmb{\mu}, \Sigma)$, dada por $$ \Psi_{\pmb{X}} (\pmb{t}) = \exp\left(i \pmb{t}^T \pmb{\mu} - \frac{1}{2} \pmb{t}^T \Sigma \pmb{t}\right), \; \pmb{t} \in \mathbb{R}^p $$
+
+\scriptsize
   \begin{lstlisting}
 # Pre: X es DNM, t es matriz
 funcion_caracteristica <- function(X, t) {
@@ -516,8 +503,30 @@ funcion_caracteristica <- function(X, t) {
   \end{lstlisting}
 \end{frame}
 
+\begin{frame}[fragile]{Función de densidad}
+
+Implementamos la función densidad de una DNM $\pmb{X} = (X_1, \ldots, X_n)^T \sim N_p(\pmb{\mu}, \Sigma)$, con $\Sigma > 0$, que está definida para un 
+
+$$f_{\pmb{X}}(\pmb{x}) = \dfrac{1}{(2\pi)^{p/2}|\Sigma|^{1/2}} \exp\left(-\frac{1}{2}(\pmb{x} - \pmb{\mu})^T\Sigma^{-1}(\pmb{x} - \pmb{\mu})\right), \; \pmb{x} \in \mathbb{R}^p $$
+
+\scriptsize
+  \begin{lstlisting}
+# Pre: X es DNM, x matriz
+funcion_densidad <- function(X, x) {
+    if (dim(x)[1] != X$p)
+        stop("Filas de x no coinciden con dimension de X")
+    if (dim(x)[2] != 1)
+        stop("x no es vector columna")
+    if (det(X$cov) <= 0)
+        stop("Matriz de covarianzas no es definida positiva")
+    # f_X(x)
+    exp(-0.5 * as.numeric(t(x - X$media) %*% solve(X$cov) %*% (x - X$media))) / ((2 * pi)^(X$p / 2) * sqrt(det(X$cov)))
+}
+  \end{lstlisting}
+\end{frame}
+
 \begin{frame}[fragile]{Teorema de la transformación lineal}
-Necesita como argumentos una DNM $\pmb{X} \sim N_p(\pmb{\mu}, \Sigma)$, una matriz $B \in \mathcal{M}_{qxp}$ ($q \leq p$) y un vector $\pmb{b} \in \mathbb{R}^q$. Entonces devuelve la DNM definida como $\pmb{Y} = B \pmb{X} + \pmb{b}$, entonces $\pmb{Y} \sim N_q(B \pmb{\mu} + \pmb{b}, B \Sigma B^T)$, con $B\Sigma B^T > 0$.
+Necesita como argumentos una DNM $\pmb{X} \sim N_p(\pmb{\mu}, \Sigma)$, una matriz $B \in \mathcal{M}_{qxp}$ ($q \leq p$) y un vector $\pmb{b} \in \mathbb{R}^q$. Entonces devuelve la DNM definida como $\pmb{Y} = B \pmb{X} + \pmb{b}$, entonces $\pmb{Y} \sim N_q(B \pmb{\mu} + \pmb{b}, B \Sigma B^T)$.
 
 \begin{lstlisting}
 transformacion_lineal <- function(X, B, b) {
