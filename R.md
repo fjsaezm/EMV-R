@@ -1,5 +1,14 @@
+# Aplicaciones del análisis multivariante con R
+
+## Autores
+Laura Gómez Garrido
+Miguel Lentisco Ballesteros
+Antonio Martín Ruiz
+Daniel Pozo Escalona
+Francisco Javier Saéz Maldonado
+
 ## Dependencias
-Instalar paquetes (completar).
+Instalar paquetes.
 
 
 ```R
@@ -332,7 +341,7 @@ Podemos ver el contenido de esta base de datos escribiendo el nombre de la varia
 wine
 ```
 
-<!-- TODO: poner imagen de tabla (?) -->
+![Wine dataset](R_files/dataframe_wine.png)
 
 
 ## Dibujando los datos
@@ -349,7 +358,7 @@ scatterplotMatrix(wine[2:3])
 ```
 
 
-![png](R_files/R_22_0.png)
+![Gráficos](R_files/R_22_0.png)
 
 
 # Cálculo usando los datos
@@ -380,10 +389,10 @@ sapply(wine[2:14],sd)
 
 ```
 
-<!-- TODO: añadir imagen de tablas -->
+![Medias](R_files/media_1.png)
 
 
-![png](R_files/R_24_4.png)
+![Medias fábrica 1 y 3](R_files/R_24_4.png)
 
 
 ## Implementación en R
@@ -399,7 +408,7 @@ plot(popul ~ manu, data = USairpollution)
 ```
 
 
-![png](R_files/R_27_0.png)
+![Scatterplot](R_files/R_27_0.png)
 
 
 También podemos representar todas los scatterplots de todas las parejas posibles a la vez con `pairs`:
@@ -410,7 +419,7 @@ pairs(USairpollution, pch = ".", cex = 1.5)
 ```
 
 
-![png](R_files/R_29_0.png)
+![Parejas de scatterplots](R_files/R_29_0.png)
 
 
 Además podemos trazar las rectas de regresión (obteniéndolas con `lm`):
@@ -425,7 +434,7 @@ pairs(USairpollution,
 ```
 
 
-![png](R_files/R_31_0.png)
+![Parejas de scatterplots con regresión](R_files/R_31_0.png)
 
 
 ## Estandarización de variables
@@ -444,7 +453,7 @@ standardised_wine <- as.data.frame(scale(wine[2:14]))
 standardised_wine
 ```
 
-<!-- TODO: imagen de la tabla (?)-->
+![Wine estandarizado](R_files/tabla.png)
 
 
 
@@ -458,7 +467,7 @@ print("Desviacion típica estandarizadas")
 sapply(standardised_wine,sd)
 ```
 
-<!-- TODO: imagen de la tabla (?)-->
+![Media estandarizada](R_files/media_2.png)
 
 Vemos que para todas las variables, $\mu_i \sim 0$ y $\sigma_i =1, \ \forall i = 2,\dots,12$, con lo que nuestras variables quedaron estandarizadas.
 
@@ -492,8 +501,6 @@ means <- matrix(c(2,3,-1), nrow = 3, ncol = 1)
 cov <- matrix(c(1, 0, 1, 0, 5, -2, 1, -2, 2), nrow = 3, ncol = 3)
 # Creamos la DNM
 X <- DNM$new(p = 3, media = means, cov = cov); X
-
-t(chol(X$cov)) %*% (chol(X$cov))
 ```
 
 
@@ -510,9 +517,6 @@ t(chol(X$cov)) %*% (chol(X$cov))
     [1,]    1    0    1
     [2,]    0    5   -2
     [3,]    1   -2    2
-
-
-<!-- TODO: imagen de la tabla (?)-->
 
 
 
@@ -563,7 +567,8 @@ funcion_densidad <- function(X, x) {
     if (det(X$cov) <= 0)
         stop("Matriz de covarianzas no es definida positiva")
     # f_X(x)
-    exp(-0.5 * as.numeric(t(x - X$media) %*% solve(X$cov) %*% (x - X$media))) / ((2 * pi)^(X$p / 2) * sqrt(det(X$cov)))
+    exp(-0.5 * as.numeric(t(x - X$media) %*% solve(X$cov)
+      %*% (x - X$media))) / ((2 * pi)^(X$p / 2) * sqrt(det(X$cov)))
 }
 ```
 
@@ -852,11 +857,12 @@ Ejemplo de la m.a.s de tamaño 14 de la DNM $\pmb{X} = (X_1, X_2, X_3)^{T} \sim 
 
 
 ```R
-X_DNM <- DNM$new(p = 3, media = matrix(c(2,3,-1), ncol = 1), cov = matrix(c(1,0,1,0,1,-0.5,1,-0.5, 2), ncol = 3, nrow = 3))
+X_DNM <- DNM$new(p = 3, media = matrix(c(2,3,-1), ncol = 1),
+  cov = matrix(c(1,0,1,0,1,-0.5,1,-0.5, 2), ncol = 3, nrow = 3))
 X <- muestra_aleatoria_EMV(20, X_DNM); X[1:10,]
 ```
 
-<!-- TODO: imagen de la tabla (?)-->
+![Muestra aleatoria simple](R_files/mas.png)
 
 
 ### Media muestral
@@ -877,7 +883,7 @@ Ejemplo con $X$ anterior:
 media_muestral(X)
 ```
 
-<!-- TODO: imagen de la tabla (?)-->
+![](R_files/media_muestral.png)
 
 
 
@@ -1073,7 +1079,8 @@ elipse_medias_sigma <- function(X, id, cov, alpha, col = "black", pch = 1, draw 
     N <- nrow(X)
     media <- media_muestral(X)
     radio <- sqrt(qchisq(alpha,p) / N)
-    elipse <- ellipse(center = media[id], shape = cov[id,id], radius = radio, draw = FALSE, pch = pch, col = col)
+    elipse <- ellipse(center = media[id], shape = cov[id,id], radius = radio,
+      draw = FALSE, pch = pch, col = col)
     if (!draw)
         plot(elipse, pch = pch, col = col)
     else
@@ -1091,11 +1098,12 @@ elipse_medias_sigma (X, c(1,3), X_DNM$cov, 0.99, col = "orange", draw = TRUE)
 points(matrix(X_DNM$media[c(1,3)], ncol=2), pch = 1, col = "blue")
 elipse_medias_sigma (X, c(1,3), X_DNM$cov, 0.90, col = "green", pch = 1, draw = TRUE)
 elipse_medias_sigma (X, c(1,3), X_DNM$cov, 0.95, col = "yellow", pch = 1, draw = TRUE)
-legend("bottomright", legend = c("0.99", "0.95", "0.90"), pch = c(1, 1, 1), col = c("orange", "yellow", "green"), cex = 2.0)
+legend("bottomright", legend = c("0.99", "0.95", "0.90"), pch = c(1, 1, 1),
+  col = c("orange", "yellow", "green"), cex = 2.0)
 ```
 
 
-![png](R_files/R_113_0.png)
+![Superficie de confianza](R_files/R_113_0.png)
 
 
 #### $\Sigma$ desconocida
@@ -1119,7 +1127,8 @@ elipse_medias <- function(X, id, alpha, col = "black", pch = 1, draw = FALSE) {
     media <- media_muestral(X)
     S <- cuasicov_muestral(X)
     radio <- sqrt(p*(N-1)*qf(alpha,p,N-p)/(N*(N-p)))
-    elipse <- ellipse(center = media[id], shape = S[id,id], radius = radio, draw = FALSE, pch = pch, col = col)
+    elipse <- ellipse(center = media[id], shape = S[id,id], radius = radio,
+      draw = FALSE, pch = pch, col = col)
     if (!draw)
         plot(elipse, pch = pch, col = col)
     else
@@ -1137,16 +1146,12 @@ elipse_medias(X, c(1,3), 0.99, col = "orange", draw = TRUE)
 points(matrix(X_DNM$media[c(1,3)], ncol=2), pch = 3, col = "blue")
 elipse_medias(X, c(1,3), 0.90, col = "green", pch = 10, draw = TRUE)
 elipse_medias(X, c(1,3), 0.95, col = "yellow", pch = 5, draw = TRUE)
-legend("bottomright", legend = c("0.99", "0.95", "0.90"), pch = c(1, 1, 1), col = c("orange", "yellow", "green"), cex = 2.0)
+legend("bottomright", legend = c("0.99", "0.95", "0.90"), pch = c(1, 1, 1),
+  col = c("orange", "yellow", "green"), cex = 2.0)
 ```
 
 
-![png](R_files/R_118_0.png)
+![Superficie de confianza](R_files/R_118_0.png)
 
 
 Comparando las dos gráficas podemos ver que si conocemos $\Sigma$ entonces las regiones de confianza son más pequeñas (tenemos más información acerca donde se encuentra el vector de medias de $\pmb{X}$).
-
-
-```R
-
-```
