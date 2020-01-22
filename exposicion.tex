@@ -9,6 +9,14 @@
 
 \usetheme{Madrid}
 
+\lstset{language=R,
+           basicstyle=\ttfamily,
+           keywordstyle=\color{blue}\ttfamily,
+           stringstyle=\color{red}\ttfamily,
+           commentstyle=\color{green}\ttfamily,
+           breaklines=true
+          }
+
 \title{Aplicaciones del análisis multivariante con R}
 \subtitle{Estadística Multivariante - Universidad de Granada}
 
@@ -128,49 +136,43 @@ Institute of Pharmaceutical and Food Analysis and Technologies, \\Via Brigata Sa
 
 \subsection{Distribución Normal Multivariante. Ejemplos}
 
-\begin{frame}[fragile]{Lectura y media}
-\begin{lstlisting}[language=R, basicstyle=\ttfamily]
-wine <- read.table("http://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data",sep=","); wine
-\end{lstlisting}
-\begin{wrapfigure}{r}{0.25\textwidth}
-\centering
-\includegraphics[width=0.25\textwidth]{dataframe_wine.png}
-\end{wrapfigure}
-\begin{lstlisting}[language=R, basicstyle=\ttfamily]
-sapply(wine[2:14],mean)
-"Media muestral del conjunto completo"
-\end{lstlisting}
-%% V2
-%%     13.0006179775281
-%% V3
-%%     2.33634831460674
-%% V4
-%%     2.36651685393258
-%% V5
-%%     19.4949438202247
-%% V6
-%%     99.7415730337079
-%% V7
-%%     2.29511235955056
-%% V8
-%%     2.02926966292135
-%% V9
-%%     0.36185393258427
-%% V10
-%%     1.59089887640449
-%% V11
-%%     5.05808988202247
-%% V12
-%%     0.957449438202247
-%% V13
-%%     2.61168539325843
-%% V14
-%%     746.893258426966
-    
-%% \end{lstlisting}
+\begin{frame}[fragile]{Lectura}
 
+
+
+\begin{lstlisting}[language=R, basicstyle=\ttfamily]
+wine <- read.table("http://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data",sep=",")
+\end{lstlisting}
+\centering
+\includegraphics[width=0.8\textwidth]{dataframe_wine.png}
+
+\begin{itemize}
+\item $read.csv$ o $read.csv2$
+\item $read.delim$
+\end{itemize}
 \end{frame}
-\begin{frame}[fragile]{Dibujado de datos seleccionados. Scatterplots}
+
+
+
+\begin{frame}[fragile]{Media y desviación típica}
+    \begin{columns}[c] % the "c" option specifies center vertical alignment
+    \column{.5\textwidth} % column designated by a command
+     \begin{lstlisting}[language=R, basicstyle=\ttfamily]
+sapply(wine[2:14],mean)
+V2 13.0006179775281
+V3 2.33634831460674
+...
+V13 2.61168539325843
+V14 746.893258426966 
+\end{lstlisting}
+    \column{.5\textwidth}
+     Contents split \\ into two lines
+    \end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]{Ejemplo de selección de datos}
+
 \begin{lstlisting}
 selection1 <- wine[wine$V1 == "1",]
 selection3 <- wine[wine$V1 == "3",]
@@ -182,19 +184,31 @@ points(chemical, mean2, col="blue", pch="*")
 legend(2,1000,legend=c("Medias en Fabrica 1","Medias en Fabrica 2"), col=c("red","blue"),
                                    pch=c("o","*"))
 \end{lstlisting}
+
 \begin{wrapfigure}{r}{0.25\textwidth}
 \centering
-\includegraphics[width=0.25\textwidth]{means.png}
+\includegraphics[width=0.8\textwidth]{means.png}
 \end{wrapfigure}
+\end{frame}
+\subsection{Scatterplots}
+\begin{frame}[fragile]{Scatterplots}
+
 Podemos realizar scatterplots de la siguiente manera
-\begin{lstlisting}
-plot(popul ~ manu, data = USairpollution)
-\end{lstlisting}
-\begin{wrapfigure}{r}{0.25\textwidth}
+
+\begin{wrapfigure}{u}{0.25\textwidth}
 \centering
 \includegraphics[width=0.25\textwidth]{scatter.png}
 \end{wrapfigure}
+\begin{lstlisting}
+plot(popul ~ manu, data = USairpollution)
+\end{lstlisting}
+
+
+
+\end{frame}
+\begin{frame}[fragile]
 O, dibujar todas las parejas posibles a la vez, y añadir las rectas de regresión
+
 \begin{lstlisting}
 pairs(USairpollution,
      panel = function(x, y, ...) {
@@ -202,10 +216,12 @@ pairs(USairpollution,
          abline(lm(y ~ x), col = "grey")
      }, pch = ".", cex = 1.5)
 \end{lstlisting}
+
 \begin{wrapfigure}{r}{0.25\textwidth}
 \centering
 \includegraphics[width=0.25\textwidth]{reg.png}
 \end{wrapfigure}
+
 \end{frame}
 
 \begin{frame}[fragile]{Implementación Teórica de una DNM}
