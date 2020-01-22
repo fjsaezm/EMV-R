@@ -5,9 +5,18 @@
 \usepackage{wrapfig}
 \usepackage{listings}
 
+
+
 \graphicspath{ {imagenes/} }
 
 \usetheme{Madrid}
+
+%gets rid of bottom navigation bars
+\setbeamertemplate{footline}[page number]{}
+
+%gets rid of navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
 
 \lstset{language=R,
            basicstyle=\ttfamily,
@@ -235,21 +244,19 @@ print(v)
 
 \end{frame}
 
+\begin{frame}[fragile]{Funciones}
+\begin{lstlisting}
+media <- function(a,b){
+    m <- (a+b)/2
+    return(m)
+}
 
-
-\begin{frame}[fragile]{Dibujando los datos}
-Librería car de ScatterplotMatrix
-
-\begin{lstlisting}[language=R, basicstyle=\ttfamily]
-library("car")
-scatterplotMatrix(wine[2:3])
+print(media(1,2))
 \end{lstlisting}
-
-\begin{figure}
-\includegraphics[width=0.5\textwidth]{carplot.png}
-\end{figure}
-
 \end{frame}
+
+
+
 
 \begin{frame}[fragile]{Cómo instalar dependencias}
 R incluye un gestor de paquetes integrado en el lenguaje, que permite instalar dependencias con la orden \texttt{install.packages()}.
@@ -450,6 +457,7 @@ pairs(USairpollution,
 \includegraphics[width=0.7\textwidth]{reg.png}
 \end{frame}
 
+\section{Implementaciones}
 \subsection{Distribución normal multivariante}
 \begin{frame}[fragile]{Implementación Teórica de una DNM}
 
@@ -460,6 +468,7 @@ DNM <- setRefClass("DNM",
                                  cov = "matrix"))
 \end{lstlisting}
 \end{frame}
+
 
 \begin{frame}[fragile]{Ejemplo de creación de una DNM}
 $\pmb{X} = (X_1, X_2, X_3)^T \sim N_3 \begin{pmatrix} \begin{pmatrix} 2 \\ 3 \\ -1 \end{pmatrix}, && \begin{pmatrix} 1 & 0 & 1 \\ 0 & 5 & -2 \\ 1 & -2 & 2 \end{pmatrix} \end{pmatrix} $
@@ -625,7 +634,7 @@ particion_condicionada <- function(X, q, x, dado_x2) {
 
 \subsection{Inferencia sobre DNM}
 
-\begin{frame}[fragile]{Notación}
+\begin{frame}[fragile]{Notacion}
 Con $\pmb{X} = (X_1, \ldots, X_p)^T \sim N_p(\pmb{\mu}, \Sigma)$, $\Sigma > 0$, consideramos una muestra aleatoria simple dada por $X = (\pmb{X}_1^T, \ldots, \pmb{X}_N^T)^T$, donde N es el tamaño muestral; de manera que cada observación se representa con $\pmb{X}_\alpha, \alpha \in \{1, \ldots, N\}$.
 
 Veremos como hacer inferencia sobre la DNM que determina $X$.
@@ -635,15 +644,15 @@ Veremos como hacer inferencia sobre la DNM que determina $X$.
 \begin{frame}[fragile]{Muestra aleatoria simple}
 Dada $\pmb{X} \sim N_p(\pmb{\mu}, \Sigma), \Sigma > 0$, podemos generar una muestra aleatoria simple de $\pmb{X}$ de tamaño $N$, mediante la siguiente función:
 
-	\begin{lstlisting}
-		muestra_aleatoria <- function(N, media, cov) {
-    		mvrnorm(N, media, cov)
-		}
+\begin{lstlisting}
+muestra_aleatoria <- function(N, media, cov) {
+    mvrnorm(N, media, cov)
+}
 
-		muestra_aleatoria_EMV <- function(N, X) {
-			mvrnorm(N, X$media, X$cov)
-		}
-	\end{lstlisting}
+muestra_aleatoria_EMV <- function(N, X) {
+    mvrnorm(N, X$media, X$cov)
+}
+\end{lstlisting}
 
 \end{frame}
 
@@ -651,30 +660,37 @@ Dada $\pmb{X} \sim N_p(\pmb{\mu}, \Sigma), \Sigma > 0$, podemos generar una mues
 
 Ejemplo de la m.a.s. de tamaño 14 de la DNM $\pmb{X} = (X_1, X_2, X_3)^T \sim N_3 \begin{pmatrix} \begin{pmatrix} 2 \\ 3 \\ -1 \end{pmatrix}, && \begin{pmatrix} 1 & 0 & 1 \\ 0 & 1 & -0.5 \\ 1 & -0.5 & 2 \end{pmatrix} \end{pmatrix} $:
 
-	\begin{lstlisting}
-	X_DNM <- DNM$new(p = 3,
-					 media = matrix(c(2,3,-1), ncol = 1),
-					 cov = matrix(c(1,0,1,0,1,-0.5,1,-0.5, 2), ncol = 3, nrow = 3))
-	X <- muestra_aleatoria_EMV(20, X_DNM); X[1:10,]
-	\end{lstlisting}
+\begin{lstlisting}
+X_DNM <- DNM$new(p = 3,
+          media = matrix(c(2,3,-1), ncol = 1),
+          cov = matrix(c(1,0,1,0,1,-0.5,1,-0.5, 2), ncol = 3, nrow = 3))
+X <- muestra_aleatoria_EMV(20, X_DNM); X[1:10,]
+\end{lstlisting}
 
-\includegraphics[width=0.8\textwidth]{mas.png}
+\end{frame}
+
+\begin{frame}[fragile]{Muestra aleatoria simple}
+
+\begin{center}
+\includegraphics[scale=0.7]{mas.png}
+\end{center}
 
 \end{frame}
 
 \begin{frame}[fragile]{Media muestral}
-Para la media muestral $\pmb{\bar{X}} = \frac{1}{N} \sum^N_{\alpha = 1} \pmb{X}_\alpha = \begin{pmatrix} \bar{X}_1 \\ \vdots \\ \bar{X}_p \end{pmatrix}$ usamos `colMeans`(la media de cada variable/columna), además este es el estimador máximo verosímil ($\pmb{\hat{\mu}} = \pmb{\bar{X}}$).
+Implementamos la media muestral $\pmb{\bar{X}} = \frac{1}{N} \sum^N_{\alpha = 1} \pmb{X}_\alpha = \begin{pmatrix} \bar{X}_1 \\ \vdots \\ \bar{X}_p \end{pmatrix}$
 
-	\begin{lstlisting}
-	media_muestral <- function(X) {
-    	matrix(colMeans(X), ncol = 1)
-	}
-	\end{lstlisting}
+Además este es el estimador máximo verosímil ($\pmb{\hat{\mu}} = \pmb{\bar{X}}$).
+
+\begin{lstlisting}
+media_muestral <- function(X) {
+    matrix(colMeans(X), ncol = 1)
+}
+\end{lstlisting}
 
 \end{frame}
 
-
-\begin{frame}[fragile]{Ejemplo media}
+\begin{frame}[fragile]{Media muestral}
 
 Ejemplo con $X$ anterior:
 
@@ -682,11 +698,10 @@ Ejemplo con $X$ anterior:
 media_muestral(X)
 \end{lstlisting}
 
-\includegraphics[width=0.8\textwidth]{media_muestral.png}
+\begin{center}
+\includegraphics[scale=0.7]{media_muestral.png}
+\end{center}
 
-\begin{lstlisting}
-
-\end{lstlisting}
 
 \end{frame}
 
@@ -694,12 +709,21 @@ media_muestral(X)
 
 Implementamos las siguientes matrices:
 
-- Matriz de dispersiones muestral: $A = \sum^N_{\alpha = 1} (\pmb{X}_\alpha - \pmb{\bar{X}})(\pmb{X}_\alpha - \pmb{\bar{X}})^T$
-- Matriz de covarianzas muestral: $S_N = \frac{1}{N} A$
-- Matriz de cuasi-covarianzas muestral: $S_{N+1} = \frac{1}{N-1} A $ (también llamada matriz de covarianzas muestral)
-- Matriz de correlaciones muestral: $R = D^{1/2}S_N D^{-1/2}$, donde $D$ es la diagonal de $S_N$
+\begin{itemize}
+
+\item Matriz de dispersiones muestral: $A = \sum^N_{\alpha = 1} (\pmb{X}_\alpha - \pmb{\bar{X}})(\pmb{X}_\alpha - \pmb{\bar{X}})^T$
+\item Matriz de covarianzas muestral: $S_N = \frac{1}{N} A$
+\item Matriz de cuasi-covarianzas muestral: $S_{N+1} = \frac{1}{N-1} A $ (también llamada matriz de covarianzas muestral)
+\item Matriz de correlaciones muestral: $R = D^{1/2}S_N D^{-1/2}$, donde $D$ es la diagonal de $S_N$
+
+\end{itemize}
 
 Sabemos que $\hat{\Sigma} = S_N$, $T = S_{N+1}$ es estimador eficiente de $\Sigma$, y $\hat{p} = R$ (coeficientes de correlacion lineal de Pearson).
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Matrices muestrales}
 
 \begin{lstlisting}
 disp_muestral <- function(X) {
@@ -725,6 +749,7 @@ cor_muestral <- function(X) {
 
 Ejemplo con la $X$ anterior:
 
+\small
 \begin{lstlisting}
 print(disp_muestral(X))
 print(cov_muestral(X))
@@ -732,6 +757,7 @@ print(cuasicov_muestral(X))
 print(cor_muestral(X))
 \end{lstlisting}
 
+\scriptsize
 \begin{lstlisting}
           [,1]      [,2]      [,3]
 [1,] 21.479470 -1.012076 22.441216
@@ -757,10 +783,9 @@ print(cor_muestral(X))
 Sobre $\pmb{X} \sim N_p(\pmb{\mu}, \Sigma)$, $\Sigma>0$ y $\{\pmb{X}_{\alpha} : \alpha = 1, \ldots, N\}$, con $N > p$ una m.a.s de $\pmb{X}$ nos planteamos el problema de contrastre $$\begin{cases} H_0 : \pmb{\mu} = \pmb{\mu}_0 \\ H_1: \pmb{\mu} \neq \pmb{\mu}_0 \end{cases}, \pmb{\mu}_0 \in \mathbb{R}^p \text{ dado.} $$
 \end{frame}
 
-
 \begin{frame}[fragile]{$\Sigma$ conocida}
 
-Para $\Sigma$ conocida usaremos el estadístico de Wishart $W = N (\pmb{\bar{X}} - \pmb{\mu}_0)^T \Sigma^{-1} (\pmb{\bar{X}} - \pmb{\mu}_0) $ sigue una $\chi^2_p(\delta)$ con $\delta = N (\pmb{\mu} - \pmb{\mu}_0)^T \Sigma^{-1} (\pmb{\mu} - \pmb{\mu}_0)$, y la función test para el problema es:
+Usamos estadístico de Wishart $W = N (\pmb{\bar{X}} - \pmb{\mu}_0)^T \Sigma^{-1} (\pmb{\bar{X}} - \pmb{\mu}_0) $ sigue una $\chi^2_p(\delta)$ con $\delta = N (\pmb{\mu} - \pmb{\mu}_0)^T \Sigma^{-1} (\pmb{\mu} - \pmb{\mu}_0)$, y la función test para el problema es:
 
 $$ \Phi(X) = \begin{cases} 1 \text{ si } W > \chi^2_{p;\alpha} \\ 0 \text{ si } W \leq \chi^2_{p;\alpha} \end{cases}, $$
 
@@ -790,6 +815,7 @@ media_test_sigma <- function(X, media_0, cov, alpha = NA) {
 
 Probamos el test con el $X$ anterior:
 
+\scriptsize
 \begin{lstlisting}
 print(X_DNM$media)
 print(media_muestral(X))
@@ -799,6 +825,7 @@ media_test_sigma(X, c(2.5, 3.5, -1.2), X_DNM$cov)
 media_test_sigma(X, X_DNM$media, X_DNM$cov, alpha = 0.05)
 \end{lstlisting}
 
+\scriptsize
 \begin{lstlisting}
      [,1]
 [1,]    2
@@ -820,7 +847,7 @@ Resultado del test:  FALSE
 
 
 \begin{frame}[fragile]{$\Sigma$ desconocida}
-En el caso de que no sepamos quien es $\Sigma$ usaremos el estadístico de $T^2$ de Hotelling, con $T^2 = N (\pmb{\bar{X}} - \pmb{\mu}_0)^T S_{N-1}^{-1} (\pmb{\bar{X}} - \pmb{\mu}_0)$, donde $\dfrac{T^2}{N-1} \dfrac{N-p}{p} \sim F_{p;N-p}(\delta)$ con $\delta = N (\pmb{\mu} - \pmb{\mu}_0)^T \Sigma^{-1} (\pmb{\mu} - \pmb{\mu}_0)$, y entonces la función test para el problema es:
+Usamos el estadístico de $T^2$ de Hotelling, con $T^2 = N (\pmb{\bar{X}} - \pmb{\mu}_0)^T S_{N-1}^{-1} (\pmb{\bar{X}} - \pmb{\mu}_0)$, donde $\dfrac{T^2}{N-1} \dfrac{N-p}{p} \sim F_{p;N-p}(\delta)$ con $\delta = N (\pmb{\mu} - \pmb{\mu}_0)^T \Sigma^{-1} (\pmb{\mu} - \pmb{\mu}_0)$, y entonces la función test para el problema es:
 
 $$ \Phi(X) = \begin{cases} 1 \text{ si } (N-p)T^2 > (N-1)pF_{p;N-p;\alpha} \\ 0 \text{ si } (N-p)T^2 \leq (N-1)pF_{p;N-p;\alpha} \end{cases}, $$
 
@@ -853,6 +880,7 @@ media_test <- function(X, media_0, alpha = NA) {
 
 Probamos con $X$:
 
+\scriptsize
 \begin{lstlisting}
 print(X_DNM$media)
 print(media_muestral(X))
@@ -862,82 +890,7 @@ media_test(X, c(2.1, 3.1, -1.2))
 media_test(X, c(3, 0, 0), alpha = 0.05)
 \end{lstlisting}
 
-\begin{lstlisting}
-print(X_DNM$media)
-
-print(media_muestral(X))
-
-media_test(X, X_DNM$media)
-
-media_test(X, media_muestral(X))
-
-media_test(X, c(2.1, 3.1, -1.2))
-
-media_test(X, c(3, 0, 0), alpha = 0.05)
-
-     [,1]
-[1,]    2
-[2,]    3
-[3,]   -1
-           [,1]
-[1,]  2.2408009
-[2,]  3.1898752
-[3,] -0.7302118
-
-p-value:  0.5912787
-p-value:  1
-p-value:  0.2963594
-Resultado del test:  TRUE
-\end{lstlisting}
-
-\end{frame}
-
-
-\begin{frame}[fragile]{$\Sigma$ desconocida}
-
-En el caso de que no sepamos quien es $\Sigma$ usaremos el estadístico de $T^2$ de Hotelling, con $T^2 = N (\pmb{\bar{X}} - \pmb{\mu}_0)^T S_{N-1}^{-1} (\pmb{\bar{X}} - \pmb{\mu}_0)$, donde $\dfrac{T^2}{N-1} \dfrac{N-p}{p} \sim F_{p;N-p}(\delta)$ con $\delta = N (\pmb{\mu} - \pmb{\mu}_0)^T \Sigma^{-1} (\pmb{\mu} - \pmb{\mu}_0)$, y entonces la función test para el problema es:
-
-$$ \Phi(X) = \begin{cases} 1 \text{ si } (N-p)T^2 > (N-1)pF_{p;N-p;\alpha} \\ 0 \text{ si } (N-p)T^2 \leq (N-1)pF_{p;N-p;\alpha} \end{cases}, $$
-
-donde $F_{p;N-p;\alpha}$ representa el valor de una distribución $F_{p;N-p}$ que deja a su derecha una probabilidad $\alpha$.
-
-\end{frame}
-
-
-\begin{frame}[fragile]{$\Sigma$ desconocida}
-
-\begin{lstlisting}
-media_test <- function(X, media_0, alpha = NA) {
-    N <- nrow(X)
-    p <- ncol(X)
-    media <- media_muestral(X)
-    S <- cuasicov_muestral(X)
-    T <- N * (t(media - media_0) %*% solve(S) %*% (media - media_0))
-    T_val <- T * (N - p) / (p * (N - 1))
-    p_value <- 1 - pf(T_val, p, N - p)
-    if (!is.na(alpha))
-        cat("\nResultado del test: ", as.logical(p_value < alpha))
-    else
-        cat("\np-value: ", p_value)
-}
-\end{lstlisting}
-
-\end{frame}
-
-
-\begin{frame}[fragile]{$\Sigma$ desconocida}
-
-Ejemplo con $X$:
-
-\begin{lstlisting}
-print(X_DNM$media)
-print(media_muestral(X))
-media_test(X, X_DNM$media)
-media_test(X, media_muestral(X))
-media_test(X, c(2.1, 3.1, -1.2))
-media_test(X, c(3, 0, 0), alpha = 0.05)
-\end{lstlisting}
-
+\scriptsize
 \begin{lstlisting}
      [,1]
 [1,]    2
@@ -974,7 +927,7 @@ Tenemos entonces que la región de confianza al $100(1 - \alpha)\%$ del vector d
 
 $$N (\pmb{\bar{X}} - \pmb{\mu}_0)^T \Sigma^{-1}(\pmb{\bar{X}} - \pmb{\mu}_0) \leq \chi^2_{p;\alpha}$$
 
-Para representarla visualmente, tomamos dos variables $X_i,X_j$ de $\pmb{X}$ y representamos la región de confianza en $\mathbb{R}^2$ para esas dos variables, que toma la forma de una elipse. Usando la matriz de covarianza $\Sigma$ y el radio $\sqrt{\dfrac{1}{N} \chi^2_{p;\alpha}}$, la representamos.
+Se representa como elipse, con $\Sigma$ y $\sqrt{\dfrac{1}{N} \chi^2_{p;\alpha}}$.
 
 \end{frame}
 
@@ -1032,7 +985,7 @@ Tenemos entonces que la región de confianza al $100(1 - \alpha)\%$ del vector d
 
 $$N (\pmb{\bar{X}} - \pmb{\mu}_0)^T S_{N-1}^{-1}(\pmb{\bar{X}} - \pmb{\mu}_0) \leq \dfrac{p(N-1)}{N-p} F_{p;N-p;\alpha} $$
 
-Para representarla visualmente, tomamos dos variables $X_i,X_j$ de $\pmb{X}$ y representamos la región de confianza en $\mathbb{R}^2$ para esas dos variables, que toma la forma de una elipse. Usando la matriz de covarianza $S_{N-1}$ y el radio $\sqrt{\dfrac{p(N-1)}{N(N-p)} F_{p;N-p;\alpha}}$, la representamos.
+Se representa como elipse, usando $S_{N-1}$ y $\sqrt{\dfrac{p(N-1)}{N(N-p)} F_{p;N-p;\alpha}}$.
 
 \end{frame}
 
