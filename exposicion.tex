@@ -33,10 +33,18 @@
 
 \begin{frame}{¿Qué es R?}
 
-R es un entorno y lenguaje de programación enfocados a la computación estadística y de gráficos. Surge como una reimplementación libre del lenguaje y entorno S. Proporciona una amplia variedad de funcionalidades estadísticas y gráficas y es altamente extensible.
-\newline
-\newline
-R está disponible como software libre bajo los términos de la GNU General Public License de la Free Software Foundation en forma de código fuente. Puede ser compilado y ejecutado en una gran cantidad de plataformas UNIX, Windows y MacOs.
+R es un entorno y lenguaje de programación enfocados a la computación
+estadística y de gráficos. Surge como una reimplementación libre del lenguaje y
+entorno S. Proporciona una amplia variedad de funcionalidades estadísticas y
+gráficas y es altamente extensible.
+
+\end{frame}
+
+\begin{frame}
+  
+R está disponible como software libre bajo los términos de la GNU General Public
+License de la Free Software Foundation en forma de código fuente. Puede ser
+compilado y ejecutado en una gran cantidad de plataformas UNIX, Windows y MacOs.
 
 \end{frame}
 
@@ -80,45 +88,45 @@ Institute of Pharmaceutical and Food Analysis and Technologies, \\Via Brigata Sa
 \subsection{Distribución Normal Multivariante. Ejemplos}
 
 \begin{frame}[fragile]{Lectura y media}
-\begin{lstlisting}
+\begin{lstlisting}[language=R, basicstyle=\ttfamily]
 wine <- read.table("http://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data",sep=","); wine
 \end{lstlisting}
 \begin{wrapfigure}{r}{0.25\textwidth}
 \centering
 \includegraphics[width=0.25\textwidth]{dataframe_wine.png}
 \end{wrapfigure}
-\begin{lstlisting}
+\begin{lstlisting}[language=R, basicstyle=\ttfamily]
 sapply(wine[2:14],mean)
 "Media muestral del conjunto completo"
-
-V2
-    13.0006179775281
-V3
-    2.33634831460674
-V4
-    2.36651685393258
-V5
-    19.4949438202247
-V6
-    99.7415730337079
-V7
-    2.29511235955056
-V8
-    2.02926966292135
-V9
-    0.36185393258427
-V10
-    1.59089887640449
-V11
-    5.05808988202247
-V12
-    0.957449438202247
-V13
-    2.61168539325843
-V14
-    746.893258426966
-    
 \end{lstlisting}
+%% V2
+%%     13.0006179775281
+%% V3
+%%     2.33634831460674
+%% V4
+%%     2.36651685393258
+%% V5
+%%     19.4949438202247
+%% V6
+%%     99.7415730337079
+%% V7
+%%     2.29511235955056
+%% V8
+%%     2.02926966292135
+%% V9
+%%     0.36185393258427
+%% V10
+%%     1.59089887640449
+%% V11
+%%     5.05808988202247
+%% V12
+%%     0.957449438202247
+%% V13
+%%     2.61168539325843
+%% V14
+%%     746.893258426966
+    
+%% \end{lstlisting}
 
 \end{frame}
 \begin{frame}[fragile]{Dibujado de datos seleccionados. Scatterplots}
